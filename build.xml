@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="fileUpload" default="dist" basedir=".">
+	<description>
+        simple example build file
+    </description>
+
+	<!-- set global properties for this build  789 123 -->
+
+
+	<property name="src" location="src/main/java" />
+	<property name="conf" location="src/main/resources" />
+	<property name="build" location="ant/build" />
+	<property name="dist" location="ant/dist" />
+	<property name="bin" location="ant/bin" />
+	<property name="jar" location="ant/jar" />
+	<property name="svn" location="ant/svn" />
+	<property name="zip" location="ant/zip" />
+	<property name="lib" location="target/fileUpload-1.0.0-SNAPSHOT/WEB-INF/lib" />
+
+	<property name="temp" location="ant/temp" />
+
+	<property environment="env"/>
+	<property name="LocalTomcat" location="${env.TOMCAT_HOME}" />
+	<property name="JAVA_HOME" value="${env.JAVA_HOME}" />
+    <property name="Remotedir" value="/home/fileUpload" />
+	<property name="RemoteTomcat" value="/jyd2/apache-tomcat-8.5.24/webapps" />
+	<property name="app" value="fileUpload" />
+	
+	<property name="webcontent" location="src/main/webapp" />
+	
+    <property name="server" value="119.23.138.232" />
+	<property name="username" value="root" />
+	<property name="password" value="Hw!Nyitqgj6*%DaN" />
+	
+	<property name="port" value="22" /> 
+
+	
+	<path id="classpath">
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+			<include name="**/*.zip" />
+		</fileset>
+		<fileset dir="${LocalTomcat}/lib">
+			<include name="**/*.jar" />
+			<include name="**/*.zip" />
+		</fileset>
+	</path>
+	<target name="dist_zip" depends="dist">
+	
+		<zip destfile="${zip}/${app}.zip" compress="true" encoding="utf-8">
+					<fileset dir="${dist}/${app}" />
+					
+		</zip>
+				
+		<echo message="#####copy all files to ${RemoteTomcat}/########" />
+					
+
+	</target>
+	
+	<target name="dist_zip_nolib" depends="dist">
+	
+		<zip destfile="${zip}/${app}.zip" compress="true" encoding="utf-8">
+					<fileset dir="${dist}/${app}" >
+						<exclude name="WEB-INF/lib/*"/>
+					</fileset>
+					
+		</zip>
+				
+		<echo message="#####copy all files to ${RemoteTomcat}/########" />
+					
+
+	</target>
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+		<mkdir dir="${zip}" />
+		<mkdir dir="${temp}" />
+		<mkdir dir="${temp}/jsptemp" />
+	</target>
+
+	<target name="compile2" depends="clean,init,src2ascii" description="compile the source ">
+		<!-- Compile the java code from ${src} into ${build} -->
+		<echo message="##########compile2 begin!" />
+		<javac srcdir="${temp}" destdir="${build}" classpathref="classpath"   encoding="UTF-8"
+			debug="true"   includeAntRuntime="false" nowarn="on" >
+		
+			   <compilerarg value="-XDignore.symbol.file" />
+		</javac>
+
+
+		<echo message="##########copy configuration files!" />
+		<copy todir="${build}">
+			<fileset dir="${src}" includes="**/*.properties"  />
+			<fileset dir="${src}" includes="**/*.xml"   />
+			<fileset dir="${src}" includes="**/*.md"    />
+			
+			<fileset dir="${conf}" includes="**/*.properties"  erroronmissingdir="false" />
+			<fileset dir="${conf}" includes="**/*.xml"  erroronmissingdir="false" />
+			<fileset dir="${conf}" includes="**/*.*"  erroronmissingdir="false" />
+		</copy>
+		<copy todir="${temp}">
+			<fileset dir="${src}" includes="**/*.properties" />
+			<fileset dir="${src}" includes="**/*.xml" />
+			<fileset dir="${src}" includes="**/*.md" />
+			
+			<fileset dir="${conf}" includes="**/*.properties"  erroronmissingdir="false" />
+			<fileset dir="${conf}" includes="**/*.xml"  erroronmissingdir="false" />
+			<fileset dir="${conf}" includes="**/*.*"  erroronmissingdir="false" />
+		</copy>
+
+	</target>
+	<target name="gbk2utf8">
+		<copy todir="${temp}" encoding="gbk" outputencoding="utf-8">
+			<fileset dir="${src}" includes="**/*.java" />
+		</copy>
+
+	</target>
+	<target name="src2ascii">
+
+		<native2ascii encoding="utf-8" src="${src}" dest="${temp}" includes="**/*.java" />
+	</target>
+	<target name="clean" description="clean up">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+		<delete dir="${temp}" />
+		<delete dir="${zip}" />
+
+	</target>
+	<target name="makedir">
+		<mkdir dir="${dist}/${app}" />
+		<mkdir dir="${dist}/${app}/WEB-INF/classes" />
+		<mkdir dir="${dist}/${app}/WEB-INF/lib" />
+		<mkdir dir="${dist}/${app}/META-INF" />
+
+	</target>
+
+
+	<target name="dist" depends="compile2,makedir" description="dist">
+		<echo message="##########copy webcontent to dist!" />
+		<copy todir="${dist}/${app}">
+			<fileset dir="${webcontent}" />
+		</copy>
+		<echo message="##########delete old classes!" />
+		<delete>
+			<fileset dir="${dist}/${app}/WEB-INF/classes" includes="**/*" />
+			<fileset dir="${dist}/${app}/WEB-INF/lib" includes="**/*" />
+		</delete>
+		<echo message="##########copy new classes!" />
+		<copy todir="${dist}/${app}/WEB-INF/classes"> 
+			<fileset dir="${build}" />
+		</copy>
+		<copy todir="${dist}/${app}/WEB-INF/lib" flatten="true">
+			<fileset dir="${lib}">
+				<include name="**/*.jar" />
+				<include name="**/*.zip" />
+			</fileset>
+
+		</copy>
+	</target>
+	<target name="svn">
+		<delete dir="${svn}" />
+		<mkdir dir="${svn}" />
+		<copy todir="${svn}" flatten="false">
+			<fileset dir="${src}" />
+		</copy>
+		<copy todir="${svn}" flatten="false">
+			<fileset dir="${lib}">
+				<include name="**/*.jar" />
+				<include name="**/*.zip" />
+			</fileset>
+		</copy>
+
+	</target>
+	<!-- 237 /////////////////////////////////////////// -->
+	<target name="remote_webxml">
+		<echo message="###########copy web xml to ${RemoteTomcat}/${app}/WEB-INF#######" />
+
+		<sshexec host="${server}" username="${username}" password="${password}" 
+           port="${port}" trust="true" command="sudo rm -rf ${Remotedir}/*.*" />
+         <sshexec host="${server}" username="${username}" password="${password}" 
+           port="${port}" trust="true" command="sudo rm -rf ${Remotedir}/WEB-INF" />
+          <sshexec host="${server}" username="${username}" password="${password}" 
+           port="${port}" trust="true" command="sudo rm -rf ${Remotedir}/classes" />
+		<scp  todir="${username}@${server}:${Remotedir}/WEB-INF" 
+		   port="${port}" password="${password}" trust="true" sftp="true" >
+		 	<fileset dir="${webcontent}/WEB-INF">
+				<include name="*.xml" />
+				<include name="*.*" />
+			</fileset>  
+		 </scp>
+		<sshexec host="${server}" username="${username}" password="${password}" port="${port}" 
+		   trust="true" command="sudo cp  ${Remotedir}/WEB-INF/*  ${RemoteTomcat}/${app}/WEB-INF" />
+
+
+		<scp  todir="${username}@${server}:${Remotedir}/classes" 
+		   port="${port}" password="${password}" trust="true" sftp="true" >
+		 	<fileset dir="${conf}">
+				<include name="*.xml" />
+				<include name="*.*" />
+			</fileset>  
+		 </scp>
+		<sshexec host="${server}" username="${username}" password="${password}" port="${port}" 
+		   trust="true" command="sudo cp  ${Remotedir}/classes/*  ${RemoteTomcat}/${app}/WEB-INF/classes" />
+
+	</target>
+	<target name="remote_webcontent">
+		<echo message="###########copy webcontent to ${RemoteTomcat}/${app}/#######" />
+		<zip destfile="${zip}/web.zip" compress="true" encoding="utf-8">
+			<fileset dir="${webcontent}">
+				<exclude name="WEB-INF/" />
+				<exclude name="META-INF/" />
+			</fileset>
+		</zip>
+		
+		<sshexec host="${server}" username="${username}" password="${password}" 
+           port="${port}" trust="true" command="sudo rm -rf ${Remotedir}/*.zip" />
+		<scp file="${zip}/web.zip" todir="${username}@${server}:${Remotedir}/" 
+		   port="${port}" password="${password}" trust="true" sftp="true" />
+		<sshexec host="${server}" username="${username}" password="${password}" port="${port}" 
+		   trust="true" command="sudo cp  ${Remotedir}/web.zip  ${RemoteTomcat}/${app}" />
+		
+		<sshexec host="${server}" username="${username}" password="${password}" 
+			port="${port}" trust="true" command="sudo unzip  -O CP936  -o ${RemoteTomcat}/${app}/web.zip -d ${RemoteTomcat}/${app}/" />
+
+		<sshexec host="${server}" username="${username}" password="${password}"
+			port="${port}" trust="true" command="sudo rm -rf ${RemoteTomcat}/${app}/web.zip" />
+		
+
+		   
+		
+	</target>
+	<target name="remote_class" depends="dist">
+		<echo message="###########copy classes to ${RemoteTomcat}/${app}/WEB-INF/classes#######" />
+
+		<zip destfile="${zip}/class.zip" compress="true" encoding="utf-8">
+			<fileset dir="${dist}/${app}/WEB-INF/classes">
+				<exclude name="*.xml" />
+				<exclude name="*.*" />
+			</fileset>
+		</zip>    
+        <sshexec host="${server}" username="${username}" password="${password}" 
+           port="${port}" trust="true" command="sudo rm -rf ${Remotedir}/*.zip" />
+		<scp file="${zip}/class.zip" todir="${username}@${server}:${Remotedir}" 
+		   port="${port}" password="${password}" trust="true" sftp="true" />
+		<sshexec host="${server}" username="${username}" password="${password}" port="${port}" 
+		   trust="true" command="sudo cp  ${Remotedir}/class.zip  ${RemoteTomcat}/${app}/WEB-INF/classes/" />
+		<sshexec host="${server}" username="${username}" 
+		password="${password}" port="${port}" trust="true" command="sudo unzip  -O CP936  -o ${RemoteTomcat}/${app}/WEB-INF/classes/class.zip -d ${RemoteTomcat}/${app}/WEB-INF/classes/" />
+
+		<sshexec host="${server}" username="${username}" 
+		password="${password}" port="${port}" trust="true" command="sudo rm -rf ${RemoteTomcat}/${app}/WEB-INF/classes/class.zip" />
+
+	</target>
+
+	<target name="remote_server" depends="dist">
+	
+		<zip destfile="${zip}/${app}.zip" compress="true" encoding="utf-8">
+					<fileset dir="${dist}/${app}" />	
+		</zip>
+				
+		<echo message="#####copy all files to ${RemoteTomcat}/########" />
+				
+	    <sshexec host="${server}" username="${username}" password="${password}" 
+           port="${port}" trust="true" command="sudo rm -rf ${Remotedir}/*.zip" />
+		<scp file="${zip}/${app}.zip" todir="${username}@${server}:${Remotedir}/" 
+		   port="${port}" password="${password}" trust="true" sftp="true" />
+		<sshexec host="${server}" username="${username}" password="${password}" port="${port}" 
+		   trust="true" command="sudo cp  ${Remotedir}/${app}.zip  ${RemoteTomcat}/" />
+		   
+		<sshexec host="${server}" username="${username}" password="${password}" port="${port}" trust="true" 
+		 command="sudo unzip  -O CP936 -o ${RemoteTomcat}/${app}.zip -d ${RemoteTomcat}/${app}" />
+
+		<sshexec host="${server}" username="${username}" password="${password}" port="${port}" trust="true" command="sudo rm -rf ${RemoteTomcat}/${app}.zip " />
+			
+	    	
+
+	</target>
+	<target name="jar_with_config" depends="compile2">
+		<mkdir dir="${jar}" />
+		<jar destfile="${jar}/${app}.jar" basedir="${build}" compress="false" />
+	</target>
+	<target name="jar" depends="compile2">
+		<mkdir dir="${jar}" />
+		<jar destfile="${jar}/${app}.jar" basedir="${build}" excludes="*.xml *.properties *.* " compress="false" />
+	</target>
+	<target name="local_server" depends="dist">
+		<echo message="#####copy all files to ${LocalTomcat} ########" />
+		<copy todir="${LocalTomcat}/webapps"> 
+			<fileset dir="${dist}" /> 
+		</copy>
+	</target>
+
+	<target name="local_class" depends="dist">
+		<echo message="#####copy all files to ${LocalTomcat} ########" />
+		<copy todir="${LocalTomcat}/webapps/${app}/WEB-INF/classes">
+			<fileset dir="${dist}/${app}/WEB-INF/classes" />
+		</copy>
+	</target>
+	<target name="local_webcontent">
+		<echo message="#####copy all files to ${LocalTomcat} ########" />
+		<copy todir="${LocalTomcat}/webapps/${app}/">
+			<fileset dir="${webcontent}" />
+		</copy>
+	</target>
+	<target name="local_webxml">
+		<echo message="###########copy web xml to ${RemoteTomcat}/${app}/WEB-INF#######" />
+
+		<copy todir="${LocalTomcat}/webapps/${app}/WEB-INF">
+			<fileset dir="${webcontent}/WEB-INF">
+				<include name="*.xml" />
+				<include name="*.*" />
+			</fileset>
+		</copy>
+
+	</target>
+</project>
+
+
+
+

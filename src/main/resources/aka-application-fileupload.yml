@@ -1,0 +1,22 @@
+
+# maxFileSize 是单个文件大小
+# maxRequestSize是设置总上传的数据大小
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+#本地上传目录,文件服务器服务目录
+#aka:
+#  file-server:
+#      upload-dir: /uploadDir
+#      #oss的http前缀
+#      oss-http-prefix: https://jyd-p2p-file.oss-cn-shenzhen.aliyuncs.com
+#      #文件服务器地址前缀
+#      http-prefix: http://localhost:9090/upload/file
+#      ds:
+
+
+
+
