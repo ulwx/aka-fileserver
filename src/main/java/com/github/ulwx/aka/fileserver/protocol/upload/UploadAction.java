@@ -92,7 +92,7 @@ public class UploadAction extends ActionSupport {
 		try {
 			String dir= StringUtils.trim(requestModel.getDir());
 			if(StringUtils.hasText(dir) ){
-				if(!dir.equals("/")) {
+				if(!dir.endsWith("/")) {
 					dir = dir + "/";
 				}
 			}else{
@@ -100,7 +100,7 @@ public class UploadAction extends ActionSupport {
 			}
 			String projectId=StringUtils.trim(requestModel.getId());
 			if(StringUtils.hasText(projectId) ){
-				if(!projectId.equals("/")) {
+				if(!projectId.endsWith("/")) {
 					projectId = projectId + "/";
 				}
 			}else{
@@ -108,7 +108,7 @@ public class UploadAction extends ActionSupport {
 			}
 			String userId=StringUtils.trim(requestModel.getUserid());
 			if(StringUtils.hasText(userId) ){
-				if(!userId.equals("/")) {
+				if(!userId.endsWith("/")) {
 					userId = userId + "/";
 				}
 			}else{
@@ -129,25 +129,30 @@ public class UploadAction extends ActionSupport {
 			String pre= AkaFileUploadAppConfig.getUploadDir()+"/";
 			FileUtils.makeDirectory(pre+str);
 			String name=SnowflakeIdWorker.instance.nextId()+"";
-			String fileType=FileTypeUtils.getTypeByFile(requestModel.file);
+			String fileType=StringUtils.trim(FileTypeUtils.getTypeByFile(requestModel.file));
+			boolean bImage=false;
 			if(requestModel.ftype==1) {//如果是上传图片
-				boolean bImage=FileTypeUtils.isImage(fileType);
+				bImage=FileTypeUtils.isImage(fileType);
 				if(!bImage) {
 					throw new ProtocolException("只能为jpg,png,tif,bmp,gif类型图片！");
 				}
-			}
-			String pathName="";
-			if(fileType!=null) {
-				/////
-			}else {
-				fileType=FileUtils.getFileType(requestModel.file);
-				if(StringUtils.isEmpty(fileType)) {
-					
-					throw new ProtocolException("无法确定文件类型！");
-				}
+			}else{//确定是否是文件
 
 			}
-			pathName=str+"/"+name+"."+fileType;
+			String pathName="";
+			String fType=FileUtils.getFileType(requestModel.file);
+			if(!fType.equals(fileType)){
+				fileType=fType;
+			}
+			if(StringUtils.isEmpty(fileType)) {
+				throw new ProtocolException("无法确定文件类型！");
+			}
+			//bImage=FileTypeUtils.isImage(fileType);
+			if(str.endsWith("/")){
+				pathName=str+name+"."+fileType;
+			}else {
+				pathName = str + "/" + name + "." + fileType;
+			}
 			
 			File desFile=new File(pre+pathName);
 			FileUtils.copyFile(requestModel.file, desFile);
@@ -183,6 +188,15 @@ public class UploadAction extends ActionSupport {
 		public String ossPath;
 		@Schema(description = "阿里云oss相对路径的http绝对地址")
 		public String ossHttpPath;
+		@Schema(description = "是否是图片")
+		public Boolean isImage;
+		public Boolean getImage() {
+			return isImage;
+		}
+
+		public void setImage(Boolean image) {
+			isImage = image;
+		}
 
 		public String getRelaFilePath() {
 			return relaFilePath;

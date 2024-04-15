@@ -115,6 +115,8 @@ public class CrossUploadManyAction extends ActionSupport {
 				uploadRequest.ftype = requestModel.ftype;
 				uploadRequest.type = requestModel.type;
 				uploadRequest.id = requestModel.id;
+				uploadRequest.dir= requestModel.dir;
+				uploadRequest.userid=requestModel.userid;
 				CbResult<UploadAction.ResUpload> br = upload.genBean(uploadRequest);
 				if (br.getStatus() == 1) {
 					UploadAction.ResUpload rul =  br.getData();

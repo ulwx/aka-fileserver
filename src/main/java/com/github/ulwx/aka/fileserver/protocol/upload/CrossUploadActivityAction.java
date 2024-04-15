@@ -26,7 +26,7 @@ import java.util.Collection;
 
 @Tag(name = "跨域zip文件上传",description = "跨域zip文件上传" )
 public class CrossUploadActivityAction  extends ActionSupport {
-	protected static Logger logger = Logger.getLogger(CrossUploadActivityAction.class);
+	protected static Logger logger = Logger.getLogger(CrossUploadAction.class);
 	@Schema( name ="CrossUploadActivityAction.RequestModel")
 	public static class RequestModel {
 		@Schema(description = "上传的zip文件",type = "object")
