@@ -33,6 +33,16 @@ public class CrossUploadActivityAction  extends ActionSupport {
 		public File file;
 		@Schema(description= "回调url地址")
 		public String callbackUrl;
+		@Schema(description = "备注")
+		public String memo;
+
+		public String getMemo() {
+			return memo;
+		}
+
+		public void setMemo(String memo) {
+			this.memo = memo;
+		}
 
 		public File getFile() {
 			return file;
@@ -94,6 +104,7 @@ public class CrossUploadActivityAction  extends ActionSupport {
 
 			ResCrossUploadActivity ru = new ResCrossUploadActivity();
 			//ru.setRedirectURL(requestModel.callbackUrl);
+			ru.memo=requestModel.memo;
 			ru.httpPath=httpPath;
 			ru.ossHttpPath=ossHttpPath;
 			ru.ossPath=ossPath;
@@ -157,6 +168,16 @@ public class CrossUploadActivityAction  extends ActionSupport {
 		public String ossPath;
 		@Schema(description =  "阿里云oss相对路径的http绝对地址")
 		public String ossHttpPath;
+		@Schema(description = "备注")
+		public String memo;
+
+		public String getMemo() {
+			return memo;
+		}
+
+		public void setMemo(String memo) {
+			this.memo = memo;
+		}
 
 		public String getRelaFilePath() {
 			return relaFilePath;

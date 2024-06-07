@@ -35,8 +35,20 @@ public class CrossUploadManyAction extends ActionSupport {
 		public String userid;
 		@Schema(description = "文件上传到的目录名称")
 		public String dir;
+
+		@Schema(description = "备注")
+		public String memo;
+
 		@Schema(description ="回调url地址")
 		public String callbackUrl;
+
+		public String getMemo() {
+			return memo;
+		}
+
+		public void setMemo(String memo) {
+			this.memo = memo;
+		}
 
 		public File[] getFiles() {
 			return files;
@@ -108,12 +120,14 @@ public class CrossUploadManyAction extends ActionSupport {
 			CrossUploadMany ru = new CrossUploadMany();
 			ru.httpPathRoot= AkaFileUploadAppConfig.getHttpPrefix();
 			ru.ossHttpPathRoot= AkaFileUploadAppConfig.getOssHttpPrefix();
+			ru.memo=requestModel.memo;
 			for (int i = 0; i < requestModel.files.length; i++) {
 				UploadAction upload = new UploadAction();
 				UploadAction.RequestModel uploadRequest=new UploadAction.RequestModel();
 				uploadRequest.file = requestModel.files[i];
 				uploadRequest.ftype = requestModel.ftype;
 				uploadRequest.type = requestModel.type;
+				uploadRequest.memo= requestModel.memo;
 				uploadRequest.id = requestModel.id;
 				uploadRequest.dir= requestModel.dir;
 				uploadRequest.userid=requestModel.userid;
@@ -122,6 +136,7 @@ public class CrossUploadManyAction extends ActionSupport {
 					UploadAction.ResUpload rul =  br.getData();
 					ru.ossPath.add(rul.ossPath);
 					ru.relaFilePath.add(rul.relaFilePath);
+
 				} else {
 					ret.setStatus(0);
 					ret.setMessage(br.getMessage());
@@ -151,6 +166,17 @@ public class CrossUploadManyAction extends ActionSupport {
 		public String ossHttpPathRoot="";
 		@Schema(description = "相对阿里云oss的根路径地址，以英文逗号分隔")
 		public List<String>  ossPath=new ArrayList<>();
+
+		@Schema(description = "备注")
+		public String memo;
+
+		public String getMemo() {
+			return memo;
+		}
+
+		public void setMemo(String memo) {
+			this.memo = memo;
+		}
 
 		public String getHttpPathRoot() {
 			return httpPathRoot;

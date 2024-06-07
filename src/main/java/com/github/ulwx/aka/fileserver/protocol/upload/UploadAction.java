@@ -34,6 +34,17 @@ public class UploadAction extends ActionSupport {
 		@Schema(description = "文件上传到的目录名称")
 		public String dir;
 
+		@Schema(description = "备注")
+		public String memo;
+
+		public String getMemo() {
+			return memo;
+		}
+
+		public void setMemo(String memo) {
+			this.memo = memo;
+		}
+
 		public File getFile() {
 			return file;
 		}
@@ -158,7 +169,7 @@ public class UploadAction extends ActionSupport {
 			FileUtils.copyFile(requestModel.file, desFile);
 
 			ResUpload res=new ResUpload();
-			
+			res.memo=requestModel.memo;
 			res.relaFilePath=pathName;
 			res.httpPath= AkaFileUploadAppConfig.getHttpPrefix()+"/"+pathName;
 			logger.debug("pathName2="+pathName);
@@ -188,8 +199,19 @@ public class UploadAction extends ActionSupport {
 		public String ossPath;
 		@Schema(description = "阿里云oss相对路径的http绝对地址")
 		public String ossHttpPath;
+		@Schema(description = "备注")
+		public String memo;
 		@Schema(description = "是否是图片")
 		public Boolean isImage;
+
+		public String getMemo() {
+			return memo;
+		}
+
+		public void setMemo(String memo) {
+			this.memo = memo;
+		}
+
 		public Boolean getImage() {
 			return isImage;
 		}

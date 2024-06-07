@@ -34,9 +34,19 @@ public class CrossUploadAction extends ActionSupport {
 		public String userid;
 		@Schema(description = "文件上传到的目录名称")
 		public String dir;
+		@Schema(description = "备注")
+		public String memo;
 
 		@Schema(description="回调url地址")
 		private String callbackUrl;
+
+		public String getMemo() {
+			return memo;
+		}
+
+		public void setMemo(String memo) {
+			this.memo = memo;
+		}
 
 		public File getFile() {
 			return file;
@@ -115,7 +125,7 @@ public class CrossUploadAction extends ActionSupport {
 			uploadReq.id =requestModel.id;
 			uploadReq.userid=requestModel.userid;
 			uploadReq.dir=requestModel.dir;
-
+			uploadReq.memo =requestModel.memo;
 			CbResult<UploadAction.ResUpload> br = upload.genBean(uploadReq);
 			if (br.getStatus() == 1) {
 				UploadAction.ResUpload rul=br.getData();
@@ -124,6 +134,7 @@ public class CrossUploadAction extends ActionSupport {
 				ru.ossHttpPath=rul.ossHttpPath;
 				ru.ossPath=rul.ossPath;
 				ru.relaFilePath=rul.relaFilePath;
+				ru.memo =rul.memo;
 				CbResult<CrossUploadResp> ret=new CbResult<>();
 				ret.setData(ru);
 				logger.debug("ru=" + ObjectUtils.toJsonString(ru));
@@ -160,6 +171,16 @@ public class CrossUploadAction extends ActionSupport {
 		public String ossPath;
 		@Schema(description  = "阿里云oss相对路径的http绝对地址")
 		public String ossHttpPath;
+		@Schema(description = "备注")
+		public String memo;
+
+		public String getMemo() {
+			return memo;
+		}
+
+		public void setMemo(String memo) {
+			this.memo = memo;
+		}
 
 		public String getRelaFilePath() {
 			return relaFilePath;
