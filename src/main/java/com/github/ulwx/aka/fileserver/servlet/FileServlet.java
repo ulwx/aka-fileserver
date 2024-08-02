@@ -1,6 +1,7 @@
 package com.github.ulwx.aka.fileserver.servlet;
 
 import com.github.ulwx.aka.fileserver.utils.AkaFileUploadAppConfig;
+import com.ulwx.tool.EscapeUtil;
 import com.ulwx.tool.IOUtils;
 import com.ulwx.tool.StringUtils;
 
@@ -20,6 +21,7 @@ public class FileServlet extends HttpServlet {
         String path=StringUtils.trimLeadingString(request.getRequestURI().toString(),
                 request.getContextPath()+"/file/");
         String uploadDir=AkaFileUploadAppConfig.getUploadDir();
+        path= EscapeUtil.unescapeUrl(path,"utf-8");
         String filePath=uploadDir+"/"+path;
         String contentType = this.getServletContext()
                 .getMimeType(filePath);//通过文件名称获取MIME类型
