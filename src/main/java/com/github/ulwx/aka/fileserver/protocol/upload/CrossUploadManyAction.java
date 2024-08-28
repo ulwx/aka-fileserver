@@ -133,7 +133,6 @@ public class CrossUploadManyAction extends ActionSupport {
 			ru.httpPathRoot= AkaFileUploadAppConfig.getHttpPrefix();
 			ru.ossHttpPathRoot= AkaFileUploadAppConfig.getOssHttpPrefix();
 			ru.memo=requestModel.memo;
-			ru.fileName=requestModel.memo;
 			for (int i = 0; i < requestModel.files.length; i++) {
 				UploadAction upload = new UploadAction();
 				UploadAction.RequestModel uploadRequest=new UploadAction.RequestModel();
@@ -150,7 +149,7 @@ public class CrossUploadManyAction extends ActionSupport {
 					UploadAction.ResUpload rul =  br.getData();
 					ru.ossPath.add(rul.ossPath);
 					ru.relaFilePath.add(rul.relaFilePath);
-
+					ru.fileName.add(rul.fileName);
 
 				} else {
 					ret.setStatus(0);
@@ -176,6 +175,8 @@ public class CrossUploadManyAction extends ActionSupport {
 		public String httpPathRoot="";
 		@Schema(description  = "相对文件服务器的根路径地址，以英文逗号分隔")
 		public List<String> relaFilePath=new ArrayList<>();
+		@Schema(description = "文件名称")
+		public List<String>  fileName=new ArrayList<>();
 
 		@Schema(description  = "阿里云osshttp地址的根路径")
 		public String ossHttpPathRoot="";
@@ -184,14 +185,13 @@ public class CrossUploadManyAction extends ActionSupport {
 
 		@Schema(description = "备注")
 		public String memo;
-		@Schema(description = "文件名称")
-		public String fileName;
 
-		public String getFileName() {
+
+		public List<String> getFileName() {
 			return fileName;
 		}
 
-		public void setFileName(String fileName) {
+		public void setFileName(List<String> fileName) {
 			this.fileName = fileName;
 		}
 
