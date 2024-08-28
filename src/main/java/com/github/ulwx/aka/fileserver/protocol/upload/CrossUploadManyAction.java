@@ -5,6 +5,7 @@ import com.github.ulwx.aka.webmvc.annotation.AkaMvcActionMethod;
 import com.github.ulwx.aka.webmvc.web.action.ActionSupport;
 import com.github.ulwx.aka.webmvc.web.action.CbResult;
 import com.ulwx.tool.ObjectUtils;
+import com.ulwx.tool.RequestUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +26,8 @@ public class CrossUploadManyAction extends ActionSupport {
 	public static class RequestModel {
 		@Schema(description = "上传的多个文件",type = "object")
 		public File[] files;
+		@Schema(description = "上传的多个文件的文件名称")
+		public String[] filesFileName;
 		@Schema(description  = "1：项目相关文件   2：活动(zip)  3：其他 ")
 		public Integer type;
 		@Schema(description  = "1：图片  2：文件")
@@ -44,6 +47,14 @@ public class CrossUploadManyAction extends ActionSupport {
 
 		public String getMemo() {
 			return memo;
+		}
+
+		public String[] getFilesFileName() {
+			return filesFileName;
+		}
+
+		public void setFilesFileName(String[] filesFileName) {
+			this.filesFileName = filesFileName;
 		}
 
 		public void setMemo(String memo) {
@@ -115,12 +126,14 @@ public class CrossUploadManyAction extends ActionSupport {
 	@AkaMvcActionMethod(httpMethod = "post")
 	public String genBean( RequestModel requestModel) {
 		//RequestModel requestModel=request.getData();
+		RequestUtils rqu=this.getRequestUtils() ;
 		CbResult<CrossUploadMany> ret=new CbResult<>();
 		try {
 			CrossUploadMany ru = new CrossUploadMany();
 			ru.httpPathRoot= AkaFileUploadAppConfig.getHttpPrefix();
 			ru.ossHttpPathRoot= AkaFileUploadAppConfig.getOssHttpPrefix();
 			ru.memo=requestModel.memo;
+			ru.fileName=requestModel.memo;
 			for (int i = 0; i < requestModel.files.length; i++) {
 				UploadAction upload = new UploadAction();
 				UploadAction.RequestModel uploadRequest=new UploadAction.RequestModel();
@@ -131,11 +144,13 @@ public class CrossUploadManyAction extends ActionSupport {
 				uploadRequest.id = requestModel.id;
 				uploadRequest.dir= requestModel.dir;
 				uploadRequest.userid=requestModel.userid;
+				uploadRequest.fileFileName=requestModel.filesFileName[i];
 				CbResult<UploadAction.ResUpload> br = upload.genBean(uploadRequest);
 				if (br.getStatus() == 1) {
 					UploadAction.ResUpload rul =  br.getData();
 					ru.ossPath.add(rul.ossPath);
 					ru.relaFilePath.add(rul.relaFilePath);
+
 
 				} else {
 					ret.setStatus(0);
@@ -169,6 +184,16 @@ public class CrossUploadManyAction extends ActionSupport {
 
 		@Schema(description = "备注")
 		public String memo;
+		@Schema(description = "文件名称")
+		public String fileName;
+
+		public String getFileName() {
+			return fileName;
+		}
+
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
+		}
 
 		public String getMemo() {
 			return memo;

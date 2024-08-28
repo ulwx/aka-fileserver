@@ -23,6 +23,8 @@ public class UploadAction extends ActionSupport {
 	public static class RequestModel {
 		@Schema(description  = "文件",type = "object")
 		public File file;
+		@Schema(description  = "文件名称")
+		public String fileFileName;
 		@Schema(description  = "1：项目相关文件   2：活动(zip)  3：其他 ")
 		public Integer type;
 		@Schema(description  = "1：图片  2：文件")
@@ -176,6 +178,7 @@ public class UploadAction extends ActionSupport {
 			String url=this.ossUpload(desFile, pathName);
 			res.ossPath=pathName;
 			res.ossHttpPath=url;
+			res.fileName=requestModel.fileFileName;
 			return this.result(this.JsonViewSuc(res));
 		}  catch (Exception e) {
 			logger.error("", e);
@@ -203,6 +206,16 @@ public class UploadAction extends ActionSupport {
 		public String memo;
 		@Schema(description = "是否是图片")
 		public Boolean isImage;
+		@Schema(description = "文件名称")
+		public String fileName;
+
+		public String getFileName() {
+			return fileName;
+		}
+
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
+		}
 
 		public String getMemo() {
 			return memo;

@@ -24,6 +24,8 @@ public class CrossUploadAction extends ActionSupport {
 	public static class RequestModel {
 		@Schema(description  = "文件",type = "object")
 		public File file;
+		@Schema(description  = "文件名称")
+		public String fileFileName;
 		@Schema(description  = "1：项目相关文件   2：活动(zip)  3：其他 ")
 		public Integer type;
 		@Schema(description  = "1：图片  2：文件")
@@ -42,6 +44,14 @@ public class CrossUploadAction extends ActionSupport {
 
 		public String getMemo() {
 			return memo;
+		}
+
+		public String getFileFileName() {
+			return fileFileName;
+		}
+
+		public void setFileFileName(String fileFileName) {
+			this.fileFileName = fileFileName;
 		}
 
 		public void setMemo(String memo) {
@@ -126,6 +136,7 @@ public class CrossUploadAction extends ActionSupport {
 			uploadReq.userid=requestModel.userid;
 			uploadReq.dir=requestModel.dir;
 			uploadReq.memo =requestModel.memo;
+			uploadReq.fileFileName=requestModel.fileFileName;
 			CbResult<UploadAction.ResUpload> br = upload.genBean(uploadReq);
 			if (br.getStatus() == 1) {
 				UploadAction.ResUpload rul=br.getData();
@@ -135,6 +146,7 @@ public class CrossUploadAction extends ActionSupport {
 				ru.ossPath=rul.ossPath;
 				ru.relaFilePath=rul.relaFilePath;
 				ru.memo =rul.memo;
+				ru.fileName=rul.fileName;
 				CbResult<CrossUploadResp> ret=new CbResult<>();
 				ret.setData(ru);
 				logger.debug("ru=" + ObjectUtils.toJsonString(ru));
@@ -173,9 +185,18 @@ public class CrossUploadAction extends ActionSupport {
 		public String ossHttpPath;
 		@Schema(description = "备注")
 		public String memo;
-
+		@Schema(description = "文件名称")
+		public String fileName;
 		public String getMemo() {
 			return memo;
+		}
+
+		public String getFileName() {
+			return fileName;
+		}
+
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
 		}
 
 		public void setMemo(String memo) {

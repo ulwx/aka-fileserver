@@ -31,6 +31,8 @@ public class CrossUploadActivityAction  extends ActionSupport {
 	public static class RequestModel {
 		@Schema(description = "上传的zip文件",type = "object")
 		public File file;
+		@Schema(description  = "文件名称")
+		public String fileFileName;
 		@Schema(description= "回调url地址")
 		public String callbackUrl;
 		@Schema(description = "备注")
@@ -105,6 +107,7 @@ public class CrossUploadActivityAction  extends ActionSupport {
 			ResCrossUploadActivity ru = new ResCrossUploadActivity();
 			//ru.setRedirectURL(requestModel.callbackUrl);
 			ru.memo=requestModel.memo;
+			ru.fileName=requestModel.fileFileName;
 			ru.httpPath=httpPath;
 			ru.ossHttpPath=ossHttpPath;
 			ru.ossPath=ossPath;
@@ -170,9 +173,18 @@ public class CrossUploadActivityAction  extends ActionSupport {
 		public String ossHttpPath;
 		@Schema(description = "备注")
 		public String memo;
-
+		@Schema(description = "文件名称")
+		public String fileName;
 		public String getMemo() {
 			return memo;
+		}
+
+		public String getFileName() {
+			return fileName;
+		}
+
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
 		}
 
 		public void setMemo(String memo) {
