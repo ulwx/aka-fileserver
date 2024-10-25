@@ -38,6 +38,14 @@ public class CrossUploadActivityAction  extends ActionSupport {
 		@Schema(description = "备注")
 		public String memo;
 
+		public String getFileFileName() {
+			return fileFileName;
+		}
+
+		public void setFileFileName(String fileFileName) {
+			this.fileFileName = fileFileName;
+		}
+
 		public String getMemo() {
 			return memo;
 		}
