@@ -187,7 +187,9 @@ public class UploadAction extends ActionSupport {
 	}
 
 	public String ossUpload(File file,String fileName) throws Exception{
-
+		if(StringUtils.isEmpty(AkaFileUploadAppConfig.getOssHttpPrefix())){
+			return "";
+		}
         String url= AkaFileUploadAppConfig.getOssHttpPrefix()+"/" + fileName;
         return url;
 
